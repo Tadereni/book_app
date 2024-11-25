@@ -1,6 +1,7 @@
 package ie.setu.controller
+import ie.setu.model.Book
 import ie.setu.persistence.Serializer
-import model.Book
+
 
 
 class BookAPI (serializerType: Serializer){
