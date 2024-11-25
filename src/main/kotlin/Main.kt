@@ -1,18 +1,21 @@
 package ie.setu
 
-import controllers.bookAPI
 
-import utils.readNextInt
+import ie.setu.model.Book
+import ie.setu.persistence.Serializer
+import ie.setu.persistence.XMLSerializer
+import ie.setu.utils.readNextInt
+import ie.setu.utils.readNextLine
+
+import ie.setu.controller.BookAPI
+
 import io.github.oshai.kotlinlogging.KotlinLogging
-import model.Note
-import persistence.XMLSerializer
 
-import utils.readNextLine
 import java.io.File
 import kotlin.system.exitProcess
 
 private val logger = KotlinLogging.logger {}
-private val bookAPI = bookAPI(XMLSerializer(File("book.xml")))
+private val bookAPI = BookAPI(XMLSerializer(File("book.xml")))
 
 fun main() {
     runMenu()
@@ -37,13 +40,13 @@ fun load() {
 fun mainMenu(): Int {
     print(""" 
          > ----------------------------------
-         > |        NOTE KEEPER APP         |
+         > |        BOOK KEEPER APP         |
          > ----------------------------------
-         > | NOTE MENU                      |
-         > |   1) Add a note                |
+         > | Book MENU                      |
+         > |   1) Add a book                |
          > |   2) List all book            |
-         > |   3) Update a note             |
-         > |   4) Delete a note             |
+         > |   3) Update a book             |
+         > |   4) Delete a book             |
          > ----------------------------------
          > |   0) Exit                      |
          > ----------------------------------
@@ -55,11 +58,11 @@ fun mainMenu(): Int {
 fun runMenu() {
     do {
         when (val option = mainMenu()) {
-            1  -> addNote()
+            1  -> addBook()
             2  -> listbook()
-            3  -> updateNote()
-            4  -> deleteNote()
-            5  -> archiveNote()
+            3  -> updateBook()
+            4  -> deleteBook()
+            5  -> archiveBook()
             6  -> searchbook()
             20  -> save()
             21  -> load()
@@ -69,17 +72,21 @@ fun runMenu() {
     } while (true)
 }
 
+//fun listActivebook() {
+//    println(bookAPI.listActivebook())
+//}
+
 fun listActivebook() {
-    println(bookAPI.listActivebook())
+    println(bookAPI.listActiveBooks())
 }
 
-fun archiveNote() {
+fun archiveBook() {
     listActivebook()
-    if (bookAPI.numberOfActivebook() > 0) {
-        //only ask the user to choose the note to archive if active book exist
-        val indexToArchive = readNextInt("Enter the index of the note to archive: ")
-        //pass the index of the note to bookAPI for archiving and check for success.
-        if (bookAPI.archiveNote(indexToArchive)) {
+    if (bookAPI.numberOfActiveBooks() > 0) {
+        //only ask the user to choose the Book to archive if active book exist
+        val indexToArchive = readNextInt("Enter the index of the Book to archive: ")
+        //pass the index of the Book to bookAPI for archiving and check for success.
+        if (bookAPI.archiveBook(indexToArchive)) {
             println("Archive Successful!")
         } else {
             println("Archive NOT Successful")
@@ -88,11 +95,11 @@ fun archiveNote() {
 }
 
 
-fun addNote(){
-    val noteTitle = readNextLine("Enter a title for the note: ")
-    val notePriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
-    val noteCategory = readNextLine("Enter a category for the note: ")
-    val isAdded = bookAPI.add(Note(noteTitle, notePriority, noteCategory, false))
+fun addBook(){
+    val BookTitle = readNextLine("Enter a title for the Book: ")
+    val BookPriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
+    val BookCategory = readNextLine("Enter a category for the Book: ")
+    val isAdded = bookAPI.add(Book(BookTitle, BookPriority, BookCategory, false))
 
     if (isAdded) {
         println("Added Successfully")
@@ -117,7 +124,7 @@ fun searchbook() {
 
 
 fun listbook() {
-    if (bookAPI.numberOfbook() > 0) {
+    if (bookAPI.numberOfBooks() > 0) {
         val option = readNextInt(
             """
                   > --------------------------------
@@ -139,27 +146,27 @@ fun listbook() {
 }
 
 fun listArchivedbook() {
-    println(bookAPI.listArchivedbook())
+    println(bookAPI.listArchivedBooks())
 }
 
 fun listAllbook() {
-    println(bookAPI.listAllbook())
+    println(bookAPI.listAllBooks())
 }
 
 
-fun updateNote() {
+fun updateBook() {
     //logger.info { "updatebook() function invoked" }
     listbook()
-    if (bookAPI.numberOfbook() > 0) {
-        //only ask the user to choose the note if book exist
-        val indexToUpdate = readNextInt("Enter the index of the note to update: ")
+    if (bookAPI.numberOfBooks() > 0) {
+        //only ask the user to choose the Book if book exist
+        val indexToUpdate = readNextInt("Enter the index of the Book to update: ")
         if (bookAPI.isValidIndex(indexToUpdate)) {
-            val noteTitle = readNextLine("Enter a title for the note: ")
-            val notePriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
-            val noteCategory = readNextLine("Enter a category for the note: ")
+            val BookTitle = readNextLine("Enter a title for the Book: ")
+            val BookPriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
+            val BookCategory = readNextLine("Enter a category for the Book: ")
 
-            //pass the index of the note and the new note details to bookAPI for updating and check for success.
-            if (bookAPI.updateNote(indexToUpdate, Note(noteTitle, notePriority, noteCategory, false))){
+            //pass the index of the Book and the new Book details to bookAPI for updating and check for success.
+            if (bookAPI.updateBook(indexToUpdate, Book(BookTitle, BookPriority, BookCategory, false))){
                 println("Update Successful")
             } else {
                 println("Update Failed")
@@ -170,16 +177,16 @@ fun updateNote() {
     }
 }
 
-fun deleteNote(){
+fun deleteBook(){
     //logger.info { "deletebook() function invoked" }
     listbook()
-    if (bookAPI.numberOfbook() > 0) {
-        //only ask the user to choose the note to delete if book exist
-        val indexToDelete = readNextInt("Enter the index of the note to delete: ")
-        //pass the index of the note to bookAPI for deleting and check for success.
-        val noteToDelete = bookAPI.deleteNote(indexToDelete)
-        if (noteToDelete != null) {
-            println("Delete Successful! Deleted note: ${noteToDelete.noteTitle}")
+    if (bookAPI.numberOfBooks() > 0) {
+        //only ask the user to choose the Book to delete if book exist
+        val indexToDelete = readNextInt("Enter the index of the Book to delete: ")
+        //pass the index of the Book to bookAPI for deleting and check for success.
+        val BookToDelete = bookAPI.deleteBook(indexToDelete)
+        if (BookToDelete != null) {
+            println("Delete Successful! Deleted Book: ${BookToDelete.BookTitle}")
         } else {
             println("Delete NOT Successful")
         }
