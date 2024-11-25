@@ -19,36 +19,36 @@ class BookAPI (serializerType: Serializer){
     }
 
 
-    fun add(Book: Book): Boolean {
-        return Books.add(Book)
+    fun add(book: Book): Boolean {
+        return books.add(book)
     }
 
 
     fun listAllBooks(): String =
-        if  (Books.isEmpty()) "No Books stored"
-        else formatListString(Books)
+        if  (books.isEmpty()) "No Books stored"
+        else formatListString(books)
 
 
 
 
     fun listActiveBooks(): String =
         if  (numberOfActiveBooks() == 0)  "No active Books stored"
-        else formatListString(Books.filter { Book -> !Book.isBookArchived})
+        else formatListString(books.filter { Book -> !Book.isBookArchived})
 
 
 
 
     fun listArchivedBooks(): String =
         if  (numberOfArchivedBooks() == 0) "No archived Books stored"
-        else formatListString(Books.filter { Book -> Book.isBookArchived})
+        else formatListString(books.filter { Book -> Book.isBookArchived})
 
 
 
 
     fun listBooksBySelectedPriority(priority: Int): String =
-        if (Books.isEmpty()) "No Books stored"
+        if (books.isEmpty()) "No Books stored"
         else {
-            val listOfBooks = formatListString(Books.filter{ Book -> Book.BookPriority == priority})
+            val listOfBooks = formatListString(books.filter{ book -> book.BookPriority == priority})
             if (listOfBooks.equals("")) "No Books with priority: $priority"
             else "${numberOfBooksByPriority()} Books with priority $priority: $listOfBooks"
         }
@@ -56,18 +56,18 @@ class BookAPI (serializerType: Serializer){
 
 
     fun numberOfBooks(): Int {
-        return Books.size
+        return books.size
     }
 
-    fun numberOfArchivedBooks(): Int = Books.count { Book: Book -> Book.isBookArchived }
+    fun numberOfArchivedBooks(): Int = books.count { Book: Book -> Book.isBookArchived }
 
-    fun numberOfActiveBooks(): Int = Books.count { Book: Book -> Book.isBookArchived }
+    fun numberOfActiveBooks(): Int = books.count { Book: Book -> Book.isBookArchived }
 
-    fun numberOfBooksByPriority(): Int = Books.count { Book: Book -> Book.isBookArchived }
+    fun numberOfBooksByPriority(): Int = books.count { Book: Book -> Book.isBookArchived }
 
     fun findBook(index: Int): Book? {
-        return if (isValidListIndex(index, Books)) {
-            Books[index]
+        return if (isValidListIndex(index, books)) {
+            books[index]
         } else null
     }
 
@@ -77,36 +77,39 @@ class BookAPI (serializerType: Serializer){
     }
 
     fun deleteBook(indexToDelete: Int): Book? {
-        return if (isValidListIndex(indexToDelete, Books)) {
-            Books.removeAt(indexToDelete)
+        return if (isValidListIndex(indexToDelete, books)) {
+            books.removeAt(indexToDelete)
         } else null
     }
 
     fun searchByTitle (searchString : String) =
         formatListString(
-            Books.filter { Book -> Book.BookTitle.contains(searchString, ignoreCase = true) })
 
+            books.filter { Book ->
+                Book.BookTitle.contains(searchString, ignoreCase = true)
+            }
+        )
 
 
     private fun formatListString(BooksToFormat : List<Book>) : String =
         BooksToFormat
             .joinToString (separator = "\n") { Book ->
-                Books.indexOf(Book).toString() + ": " + Book.toString() }
+                books.indexOf(Book).toString() + ": " + Book.toString() }
 
 
 
 
 
 
-    fun updateBook(indexToUpdate: Int, Book: Book?): Boolean {
+    fun updateBook(indexToUpdate: Int, book: Book?): Boolean {
         //find the Book object by the index number
         val foundBook = findBook(indexToUpdate)
 
         //if the Book exists, use the Book details passed as parameters to update the found Book in the ArrayList.
-        if ((foundBook != null) && (Book != null)) {
-            foundBook.BookTitle = Book.BookTitle
-            foundBook.BookPriority = Book.BookPriority
-            foundBook.BookCategory = Book.BookCategory
+        if ((foundBook != null) && (book != null)) {
+            foundBook.BookTitle = book.BookTitle
+            foundBook.BookPriority = book.BookPriority
+            foundBook.BookCategory = book.BookCategory
             return true
         }
 
@@ -115,12 +118,12 @@ class BookAPI (serializerType: Serializer){
     }
 
     fun isValidIndex(index: Int): Boolean {
-        return isValidListIndex(index, Books);
+        return isValidListIndex(index, books);
     }
 
     fun archiveBook(indexToArchive: Int): Boolean {
         if (isValidIndex(indexToArchive)) {
-            val BookToArchive = Books[indexToArchive]
+            val BookToArchive = books[indexToArchive]
             if (!BookToArchive.isBookArchived) {
                 BookToArchive.isBookArchived = true
                 return true
