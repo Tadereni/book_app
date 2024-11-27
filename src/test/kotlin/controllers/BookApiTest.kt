@@ -22,8 +22,6 @@ class BookApiTest {
     private var emptyBooks: BookAPI? = BookAPI(XMLSerializer(File("empty-Books.xml")))
 
 
-
-
     @Nested
     inner class AddBookTest {
 
@@ -31,39 +29,39 @@ class BookApiTest {
         fun `add book returns true`() {
 
             val newBook = Book("New Book", 3, "New Category", false)
-            assertEquals(5,populatedBooks!!.numberOfBooks())
+            assertEquals(5, populatedBooks!!.numberOfBooks())
             assertTrue(populatedBooks!!.add(newBook))
-            assertEquals(6,populatedBooks!!.numberOfBooks())
-            assertEquals(newBook,populatedBooks!!.findBook(populatedBooks!!.numberOfBooks() -1 ))
+            assertEquals(6, populatedBooks!!.numberOfBooks())
+            assertEquals(newBook, populatedBooks!!.findBook(populatedBooks!!.numberOfBooks() - 1))
         }
 
         @Test
         fun `add book to an empty list to add arraylist`() {
             val newBook = Book("New Book", 3, "New Category", false)
-            assertEquals(0,emptyBooks!!.numberOfBooks())
+            assertEquals(0, emptyBooks!!.numberOfBooks())
             assertTrue(emptyBooks!!.add(newBook))
-            assertEquals(1,emptyBooks!!.numberOfBooks())
-           assertEquals(newBook, emptyBooks!!.findBook(emptyBooks!!.numberOfBooks() -1))
+            assertEquals(1, emptyBooks!!.numberOfBooks())
+            assertEquals(newBook, emptyBooks!!.findBook(emptyBooks!!.numberOfBooks() - 1))
 
         }
     }
 
     @Nested
     inner class listBooks {
-       @Test
-       fun `listAllBooks return no Books Stores message when arraylist is empty`() {
+        @Test
+        fun `listAllBooks return no Books Stores message when arraylist is empty`() {
 
-           assertEquals(0, emptyBooks!!.listAllBooks())
-           assertTrue(emptyBooks!!.listAllBooks().lowercase().contains("no books stored"))
+            assertEquals(0, emptyBooks!!.listAllBooks())
+            assertTrue(emptyBooks!!.listAllBooks().lowercase().contains("no books stored"))
 
-       }
+        }
 
 
         @Test
         fun `listAllBooks return list of books when arraylist has books store`() {
 
             assertEquals(5, populatedBooks!!.numberOfBooks())
-            val  bookString = populatedBooks!!.listAllBooks().lowercase()
+            val bookString = populatedBooks!!.listAllBooks().lowercase()
             assertTrue(bookString.contains("learn kotlin"))
             assertTrue(bookString.contains("summer holiday"))
             assertTrue(bookString.contains("code app"))
@@ -83,7 +81,7 @@ class BookApiTest {
         fun `listactiveBooks return list of active books when arraylist has books store`() {
 
             assertEquals(3, populatedBooks!!.numberOfBooks())
-            val  activeBookString = populatedBooks!!.listActiveBooks().lowercase()
+            val activeBookString = populatedBooks!!.listActiveBooks().lowercase()
             assertTrue(activeBookString.contains("learn kotlin"))
             assertTrue(activeBookString.contains("code app"))
             assertTrue(activeBookString.contains("test app"))
@@ -95,7 +93,7 @@ class BookApiTest {
         @Test
         fun `listBookSelected return no Books when arraylist is empty`() {
 
-            assertEquals(0,populatedBooks!!.numberOfBooks())
+            assertEquals(0, populatedBooks!!.numberOfBooks())
             assertTrue(populatedBooks!!.listBooksBySelectedPriority(0).lowercase().contains("no books stored"))
 
         }
@@ -132,46 +130,27 @@ class BookApiTest {
         }
 
 
+        @Nested
+        inner class DeleteBookTest {
 
-        
+            @Test
+            fun `delete a book that does not exist, returns null `() {
 
+                assertNull(emptyBooks!!.numberOfBooks())
+                assertNull(populatedBooks!!.deleteBook(-1))
+                assertNull(populatedBooks!!.deleteBook(5))
+            }
 
-
-
-
-
-
-
-
-
-
+            @Test
+            fun `deleting a book that exists delete and returns deleted object`() {
+                assertEquals(5, populatedBooks!!.numberOfBooks())
+                assertEquals(swim, populatedBooks!!.deleteBook(4))
+                assertEquals(4, populatedBooks!!.numberOfBooks())
+                assertEquals(learnKotlin, populatedBooks!!.deleteBook(0))
+                assertEquals(3, populatedBooks!!.numberOfBooks())
+            }
+        }
 
 
     }
-
-
-
-
-    @Nested
-   inner class DeleteBookTest {
-
-       @Test
-       fun `delete a book that does not exist, returns null `() {
-
-           assertNull(emptyBooks!!.numberOfBooks())
-           assertNull(populatedBooks!!.deleteBook(-1))
-           assertNull(populatedBooks!!.deleteBook(5))
-       }
-
-        @Test
-        fun `deleting a book that exists delete and returns deleted object`() {
-            assertEquals(5, populatedBooks!!.numberOfBooks())
-            assertEquals(swim, populatedBooks!!.deleteBook(4))
-            assertEquals(4, populatedBooks!!.numberOfBooks())
-            assertEquals(learnKotlin, populatedBooks!!.deleteBook(0))
-            assertEquals(3, populatedBooks!!.numberOfBooks())
-        }
-   }
-    
-    
 }

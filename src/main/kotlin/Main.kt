@@ -47,6 +47,10 @@ fun mainMenu(): Int {
          > |   2) List all book            |
          > |   3) Update a book             |
          > |   4) Delete a book             |
+         > |   5) Archive a book            |
+         > |   6) Search a book             | 
+         > |   20) Save  a book             |
+         > |   21) Load  a book             |  
          > ----------------------------------
          > |   0) Exit                      |
          > ----------------------------------
@@ -72,9 +76,7 @@ fun runMenu() {
     } while (true)
 }
 
-//fun listActivebook() {
-//    println(bookAPI.listActivebook())
-//}
+
 
 fun listActivebook() {
     println(bookAPI.listActiveBooks())
