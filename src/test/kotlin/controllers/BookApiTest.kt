@@ -129,28 +129,54 @@ class BookApiTest {
 
         }
 
+    }
+@Nested
+    inner class DeleteBookTest {
 
-        @Nested
-        inner class DeleteBookTest {
+        @Test
+        fun `delete a book that does not exist, returns null `() {
 
-            @Test
-            fun `delete a book that does not exist, returns null `() {
+            assertNull(emptyBooks!!.numberOfBooks())
+            assertNull(populatedBooks!!.deleteBook(-1))
+            assertNull(populatedBooks!!.deleteBook(5))
+        }
 
-                assertNull(emptyBooks!!.numberOfBooks())
-                assertNull(populatedBooks!!.deleteBook(-1))
-                assertNull(populatedBooks!!.deleteBook(5))
-            }
+        @Test
+        fun `deleting a book that exists delete and returns deleted object`() {
+            assertEquals(5, populatedBooks!!.numberOfBooks())
+            assertEquals(swim, populatedBooks!!.deleteBook(4))
+            assertEquals(4, populatedBooks!!.numberOfBooks())
+            assertEquals(learnKotlin, populatedBooks!!.deleteBook(0))
+            assertEquals(3, populatedBooks!!.numberOfBooks())
+        }
+    }
 
-            @Test
-            fun `deleting a book that exists delete and returns deleted object`() {
-                assertEquals(5, populatedBooks!!.numberOfBooks())
-                assertEquals(swim, populatedBooks!!.deleteBook(4))
-                assertEquals(4, populatedBooks!!.numberOfBooks())
-                assertEquals(learnKotlin, populatedBooks!!.deleteBook(0))
-                assertEquals(3, populatedBooks!!.numberOfBooks())
-            }
+
+    @Nested
+    inner class UpdateBook {
+        @Test
+        fun `updating a book that does not exist returns false`(){
+            assertFalse(populatedBooks!!.updateBook(6, Book("New Book", 3, "New Category", false)))
+            assertFalse(populatedBooks!!.updateBook(-1, Book("New Book", 3, "New Category", false)))
+            assertFalse(emptyBooks!!.updateBook(0, Book("New Book", 3, "New Category", false)))
         }
 
 
+
+        @Test
+        fun `updating a note that exists returns true and updates`() {
+            //check note 5 exists and check the contents
+            assertEquals(swim, populatedBooks!!.findBook(4))
+            assertEquals("Swim - Pool", populatedBooks!!.findBook(4)!!.BookTitle)
+            assertEquals(3, populatedBooks!!.findBook(4)!!.BookPriority)
+            assertEquals("Hobby", populatedBooks!!.findBook(4)!!.BookCategory)
+
+            //update note 5 with new information and ensure contents updated successfully
+            assertTrue(populatedBooks!!.updateBook(4, Book("Updating books", 2, "College", false)))
+            assertEquals("Updating Note", populatedBooks!!.findBook(4)!!.BookTitle)
+            assertEquals(2, populatedBooks!!.findBook(4)!!.BookPriority)
+            assertEquals("College", populatedBooks!!.findBook(4)!!.BookCategory)
+        }
     }
+
 }
