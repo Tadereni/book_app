@@ -18,8 +18,8 @@ class BookApiTest {
     private var codeApp: Book? = null
     private var testApp: Book? = null
     private var swim: Book? = null
-    private var populatedBooks: BookAPI? = BookAPI(XMLSerializer(File("books.xml")))
-    private var emptyBooks: BookAPI? = BookAPI(XMLSerializer(File("empty-books.xml")))
+    private var populatedBooks: BookAPI? = BookAPI(XMLSerializer(File("Books.xml")))
+    private var emptyBooks: BookAPI? = BookAPI(XMLSerializer(File("empty-Books.xml")))
 
 
     @Nested
@@ -190,35 +190,35 @@ class BookApiTest {
             storingBooks.store()
 
             //Loading the empty notes.xml file into a new object
-            val loadedBooks = BookAPI(XMLSerializer(File("books.xml")))
-            loadedBooks.load()
+            val loadedNotes = BookAPI(XMLSerializer(File("books.xml")))
+            loadedNotes.load()
 
-            //Comparing the source of the notes (storingBooks) with the XML loaded notes (loadedBooks)
+            //Comparing the source of the notes (storingBooks) with the XML loaded notes (loadedNotes)
             assertEquals(0, storingBooks.numberOfBooks())
-            assertEquals(0, loadedBooks.numberOfBooks())
-            assertEquals(storingBooks.numberOfBooks(), loadedBooks.numberOfBooks())
+            assertEquals(0, loadedNotes.numberOfBooks())
+            assertEquals(storingBooks.numberOfBooks(), loadedNotes.numberOfBooks())
         }
 
         @Test
         fun `saving and loading an loaded collection in XML doesn't loose data`() {
             // Storing 3 notes to the notes.XML file.
-            val storingBooks = BookAPI(XMLSerializer(File("books.xml")))
+            val storingBooks = BookAPI(XMLSerializer(File("notes.xml")))
             storingBooks.add(testApp!!)
             storingBooks.add(swim!!)
             storingBooks.add(summerHoliday!!)
             storingBooks.store()
 
             //Loading notes.xml into a different collection
-            val loadedBooks = BookAPI(XMLSerializer(File("books.xml")))
-            loadedBooks.load()
+            val loadedNotes = BookAPI(XMLSerializer(File("books.xml")))
+            loadedNotes.load()
 
-            //Comparing the source of the notes (storingBooks) with the XML loaded notes (loadedBooks)
+            //Comparing the source of the notes (storingBooks) with the XML loaded notes (loadedNotes)
             assertEquals(3, storingBooks.numberOfBooks())
-            assertEquals(3, loadedBooks.numberOfBooks())
-            assertEquals(storingBooks.numberOfBooks(), loadedBooks.numberOfBooks())
-            assertEquals(storingBooks.findBook(0), loadedBooks.findBook(0))
-            assertEquals(storingBooks.findBook(1), loadedBooks.findBook(1))
-            assertEquals(storingBooks.findBook(2), loadedBooks.findBook(2))
+            assertEquals(3, loadedNotes.numberOfBooks())
+            assertEquals(storingBooks.numberOfBooks(), loadedNotes.numberOfBooks())
+            assertEquals(storingBooks.findBook(0), loadedNotes.findBook(0))
+            assertEquals(storingBooks.findBook(1), loadedNotes.findBook(1))
+            assertEquals(storingBooks.findBook(2), loadedNotes.findBook(2))
         }
     }
 
