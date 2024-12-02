@@ -47,8 +47,9 @@ fun mainMenu(): Int {
          > |   2) List all book            |
          > |   3) Update a book             |
          > |   4) Delete a book             |
-         > |   5) Archive a book            |
+         > |   5) archiveBookMenu           |
          > |   6) Search a book             | 
+         > |  7) archiveBook                | 
          > |   20) Save  a book             |
          > |   21) Load  a book             |  
          > ----------------------------------
@@ -66,8 +67,9 @@ fun runMenu() {
             2  -> listbook()
             3  -> updateBook()
             4  -> deleteBook()
-            5  -> archiveBook()
+            5  -> archiveBookMenu()
             6  -> searchbook()
+            7  -> archiveBook()
             20  -> save()
             21  -> load()
             0  -> exitApp()
@@ -95,6 +97,39 @@ fun archiveBook() {
         }
     }
 }
+
+
+fun archiveBookMenu() {
+    listActiveBook()
+    if (bookAPI.numberOfActiveBooks() > 0) {
+        //only ask the user to choose the Book to archive if active book exist
+        val indexToArchive = readNextInt("Enter the index of the Book to archive: ")
+        //pass the index of the Book to bookAPI for archiving and check for success.
+        if (bookAPI.archiveBook(indexToArchive)) {
+            println("Archive Successful!")
+        } else {
+            println("Archive NOT Successful")
+        }
+    }
+}
+
+fun archiveBook(indexToArchive: Int): Boolean {
+    if (bookAPI.isValidIndex(indexToArchive)) { // Call isValidIndex on bookAPI
+        val BookToArchive = bookAPI.findBook(indexToArchive)
+        if (BookToArchive != null) {
+            if (!BookToArchive.isBookArchived) {
+                BookToArchive.isBookArchived = true
+                return true
+            }
+        }
+    }
+    return false
+}
+
+fun listActiveBook() {
+    println(bookAPI.listActiveBooks())
+}
+
 
 
 fun addBook(){
@@ -156,13 +191,36 @@ fun listAllbook() {
 }
 
 
+//fun updateBook() {
+//    //logger.info { "updatebook() function invoked" }
+//    listbook()
+//    if (bookAPI.numberOfBooks() > 0) {
+//        //only ask the user to choose the Book if book exist
+//        val indexToUpdate = readNextInt("Enter the index of the Book to update: ")
+//        if (bookAPI.isValidIndex(indexToUpdate)) {
+//            val BookTitle = readNextLine("Enter a title for the Book: ")
+//            val BookPriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
+//            val BookCategory = readNextLine("Enter a category for the Book: ")
+//
+//            //pass the index of the Book and the new Book details to bookAPI for updating and check for success.
+//            if (bookAPI.updateBook(indexToUpdate, Book(BookTitle, BookPriority, BookCategory, false))){
+//                println("Update Successful")
+//            } else {
+//                println("Update Failed")
+//            }
+//        } else {
+//            println("There are no book for this index number")
+//        }
+//    }
+//}
+
 fun updateBook() {
     //logger.info { "updatebook() function invoked" }
     listbook()
     if (bookAPI.numberOfBooks() > 0) {
         //only ask the user to choose the Book if book exist
         val indexToUpdate = readNextInt("Enter the index of the Book to update: ")
-        if (bookAPI.isValidIndex(indexToUpdate)) {
+        if (bookAPI.isValidIndex(indexToUpdate)) { // Call isValidIndex on bookAPI
             val BookTitle = readNextLine("Enter a title for the Book: ")
             val BookPriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
             val BookCategory = readNextLine("Enter a category for the Book: ")
@@ -194,6 +252,13 @@ fun deleteBook(){
         }
     }
 }
+
+
+
+
+
+
+
 
 fun exitApp(){
     logger.info { "exitApp() function invoked" }
