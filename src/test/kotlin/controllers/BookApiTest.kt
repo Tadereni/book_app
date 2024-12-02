@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import ie.setu.persistence.XMLSerializer
 import ie.setu.model.Book
+import ie.setu.persistence.JSONSerializer
 import java.io.File
 
 
@@ -220,6 +221,46 @@ class BookApiTest {
             assertEquals(storingBooks.findBook(1), loadedBooks.findBook(1))
             assertEquals(storingBooks.findBook(2), loadedBooks.findBook(2))
         }
+
+        @Test
+        fun `saving and loading an empty collection in JSON doesn't crash app`() {
+            // Saving an empty notes.json file.
+            val storingBooks = BookAPI(JSONSerializer(File("books.json")))
+            storingBooks.store()
+
+            //Loading the empty notes.json file into a new object
+            val loadedBooks = BookAPI(JSONSerializer(File("books.json")))
+            loadedBooks.load()
+
+            //Comparing the source of the notes (storingBooks) with the json loaded notes (loadedBooks)
+            assertEquals(0, storingBooks.numberOfBooks())
+            assertEquals(0, loadedBooks.numberOfBooks())
+            assertEquals(storingBooks.numberOfBooks(), loadedBooks.numberOfBooks())
+        }
+
+        @Test
+        fun `saving and loading an loaded collection in JSON doesn't loose data`() {
+            // Storing 3 notes to the notes.json file.
+            val storingBooks = BookAPI(JSONSerializer(File("books.json")))
+            storingBooks.add(testApp!!)
+            storingBooks.add(swim!!)
+            storingBooks.add(summerHoliday!!)
+            storingBooks.store()
+
+            //Loading notes.json into a different collection
+            val loadedBooks = BookAPI(JSONSerializer(File("books.json")))
+            loadedBooks.load()
+
+            //Comparing the source of the notes (storingBooks) with the json loaded notes (loadedBooks)
+            assertEquals(3, storingBooks.numberOfBooks())
+            assertEquals(3, loadedBooks.numberOfBooks())
+            assertEquals(storingBooks.numberOfBooks(), loadedBooks.numberOfBooks())
+            assertEquals(storingBooks.findBook(0), loadedBooks.findBook(0))
+            assertEquals(storingBooks.findBook(1), loadedBooks.findBook(1))
+            assertEquals(storingBooks.findBook(2), loadedBooks.findBook(2))
+        }
+
+
     }
 
 }
