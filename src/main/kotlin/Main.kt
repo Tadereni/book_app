@@ -47,7 +47,7 @@ fun mainMenu(): Int {
          > |   2) List all book            |
          > |   3) Update a book             |
          > |   4) Delete a book             |
-         > |   5) archiveBookMenu           |
+         > |   5) archive  Book             |
          > |   6) Search a book             | 
          > |  7) archiveBook                | 
          > |   20) Save  a book             |
@@ -67,9 +67,8 @@ fun runMenu() {
             2  -> listbook()
             3  -> updateBook()
             4  -> deleteBook()
-            5  -> archiveBookMenu()
+            5  -> archiveBook()
             6  -> searchbook()
-            7  -> archiveBook()
             20  -> save()
             21  -> load()
             0  -> exitApp()
@@ -86,6 +85,8 @@ fun listActivebook() {
 
 fun archiveBook() {
     listActivebook()
+    listbook()
+
     if (bookAPI.numberOfActiveBooks() > 0) {
         //only ask the user to choose the Book to archive if active book exist
         val indexToArchive = readNextInt("Enter the index of the Book to archive: ")
@@ -98,20 +99,10 @@ fun archiveBook() {
     }
 }
 
-
-fun archiveBookMenu() {
-    listActiveBook()
-    if (bookAPI.numberOfActiveBooks() > 0) {
-        //only ask the user to choose the Book to archive if active book exist
-        val indexToArchive = readNextInt("Enter the index of the Book to archive: ")
-        //pass the index of the Book to bookAPI for archiving and check for success.
-        if (bookAPI.archiveBook(indexToArchive)) {
-            println("Archive Successful!")
-        } else {
-            println("Archive NOT Successful")
-        }
-    }
+fun listarchivebook() {
+    println(bookAPI.listArchivedBooks())
 }
+
 
 fun archiveBook(indexToArchive: Int): Boolean {
     if (bookAPI.isValidIndex(indexToArchive)) { // Call isValidIndex on bookAPI
@@ -126,9 +117,7 @@ fun archiveBook(indexToArchive: Int): Boolean {
     return false
 }
 
-fun listActiveBook() {
-    println(bookAPI.listActiveBooks())
-}
+
 
 
 
@@ -146,6 +135,16 @@ fun addBook(){
 }
 
 
+//fun searchbook() {
+//    val searchTitle = readNextLine("Enter the description to search by: ")
+//    val searchResults = bookAPI.searchByTitle(searchTitle)
+//    if (searchResults.isEmpty()) {
+//        println("No book found")
+//    } else {
+//        println(searchResults)
+//    }
+//}
+
 fun searchbook() {
     val searchTitle = readNextLine("Enter the description to search by: ")
     val searchResults = bookAPI.searchByTitle(searchTitle)
@@ -155,8 +154,6 @@ fun searchbook() {
         println(searchResults)
     }
 }
-
-
 
 
 

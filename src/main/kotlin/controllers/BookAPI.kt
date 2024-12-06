@@ -24,25 +24,61 @@ class BookAPI (serializerType: Serializer){
     }
 
 
-    fun listAllBooks(): String =
-        if  (books.isEmpty()) "No Books stored"
-        else formatListString(books)
+//    fun listAllBooks(): String =
+//        if  (books.isEmpty()) "No Books stored"
+//        else formatListString(books)
+//
+    fun listAllBooks(): String {
+    if (books.isEmpty()) {
+        return "No notes stored"
+    } else {
+        return books.joinToString (separator = "\n") { book ->
+            books.indexOf(book).toString() + ": " + book.toString()
+        }
+    }
+}
 
 
 
-
-    fun listActiveBooks(): String =
-        if  (numberOfActiveBooks() == 0)  "No active Books stored"
-        else formatListString(books.filter { Book -> !Book.isBookArchived})
-
+//    fun listActiveBooks(): String =
+//        if  (numberOfActiveBooks() == 0)  "No active Books stored"
+//        else formatListString(books.filter { Book -> !Book.isBookArchived})
 
 
+    fun listActiveBooks(): String {
+        return if (numberOfActiveBooks() == 0) {
+            "No active notes stored"
+        } else {
+            var listOfActiveBook = ""
+            for (book in books) {
+                if (!book.isBookArchived) {
+                    listOfActiveBook += "${books.indexOf(book)}: $book \n"
+                }
+            }
+            listOfActiveBook
+        }
+    }
 
-    fun listArchivedBooks(): String =
-        if  (numberOfArchivedBooks() == 0) "No archived Books stored"
-        else formatListString(books.filter { Book -> Book.isBookArchived})
 
 
+//    fun listArchivedBooks(): String =
+//        if  (numberOfArchivedBooks() == 0) "No archived Books stored"
+//        else formatListString(books.filter { Book -> Book.isBookArchived})
+
+
+    fun listArchivedBooks(): String {
+        return if (numberOfArchivedBooks() == 0) {
+            "No archived books stored"
+        } else {
+            var listOfArchivedBook = ""
+            for (book in books) {
+                if (book.isBookArchived) {
+                    listOfArchivedBook += "${books.indexOf(book)}: $book \n"
+                }
+            }
+            listOfArchivedBook
+        }
+    }
 
 
     fun listBooksBySelectedPriority(priority: Int): String =
@@ -50,7 +86,7 @@ class BookAPI (serializerType: Serializer){
         else {
             val listOfBooks = formatListString(books.filter{ book -> book.BookPriority == priority})
             if (listOfBooks.equals("")) "No Books with priority: $priority"
-            else "${numberOfBooksByPriority()} Books with priority $priority: $listOfBooks"
+            else "${numberOfBookByPriority(5)} Books with priority $priority: $listOfBooks"
         }
 
 
@@ -59,17 +95,46 @@ class BookAPI (serializerType: Serializer){
         return books.size
     }
 
-    fun numberOfArchivedBooks(): Int = books.count { Book: Book -> Book.isBookArchived }
+//    fun numberOfArchivedBooks(): Int = books.count { Book: Book -> Book.isBookArchived }
 
-    fun numberOfActiveBooks(): Int = books.count { Book: Book -> Book.isBookArchived }
+    fun numberOfArchivedBooks(): Int {
+        var counter = 0
+        for (book in books) {
+            if (book.isBookArchived) {
+                counter++
+            }
+        }
+        return counter
+    }
 
-    fun numberOfBooksByPriority(): Int = books.count { Book: Book -> Book.isBookArchived }
+//    fun numberOfActiveBooks(): Int = books.count { Book: Book -> Book.isBookArchived }
+
+    fun numberOfActiveBooks(): Int {
+        return books.stream()
+            .filter{note: Book -> !note.isBookArchived}
+            .count()
+            .toInt()
+    }
+
+//    fun numberOfBooksByPriority(i: Int): Int = books.count { Book: Book -> Book.isBookArchived }
+
+    fun numberOfBookByPriority(priority: Int): Int {
+        var counter = 0
+        for (book in books) {
+            if (book.BookPriority == priority) {
+                counter++
+            }
+        }
+        return counter
+    }
 
     fun findBook(index: Int): Book? {
         return if (isValidListIndex(index, books)) {
             books[index]
         } else null
     }
+
+
 
     //utility method to determine if an index is valid in a list.
     fun isValidListIndex(index: Int, list: List<Any>): Boolean {
@@ -82,13 +147,18 @@ class BookAPI (serializerType: Serializer){
         } else null
     }
 
-    fun searchByTitle (searchString : String) =
-        formatListString(
+//    fun searchByTitle (searchString : String) =
+//        formatListString(
+//
+//            books.filter { Book ->
+//                Book.BookTitle.contains(searchString, ignoreCase = true)
+//            }
+//        )
 
-            books.filter { Book ->
-                Book.BookTitle.contains(searchString, ignoreCase = true)
-            }
-        )
+    fun searchByTitle(searchString : String) =
+        books.filter { book -> book.BookTitle.contains(searchString, ignoreCase = true)}
+            .joinToString (separator = "\n") {
+                    book ->  books.indexOf(book).toString() + ": " + book.toString() }
 
 
     private fun formatListString(BooksToFormat : List<Book>) : String =
@@ -117,7 +187,7 @@ class BookAPI (serializerType: Serializer){
         return false
     }
 
-   public fun isValidIndex(index: Int): Boolean {
+    fun isValidIndex(index: Int): Boolean {
         return isValidListIndex(index, books);
     }
 
@@ -131,4 +201,6 @@ class BookAPI (serializerType: Serializer){
         }
         return false
     }
+
+
 }
